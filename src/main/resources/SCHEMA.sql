@@ -1,3 +1,7 @@
+-- Empty database bootstrap: allow circular foreign-key references.
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
 CREATE TABLE `alarm` (
   `alarm_id` int NOT NULL AUTO_INCREMENT,
   `room_id` int NOT NULL,
@@ -255,6 +259,8 @@ CREATE TABLE `wishlist` (
   CONSTRAINT `wishlist_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE,
   CONSTRAINT `wishlist_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=130 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+SET FOREIGN_KEY_CHECKS = 1;
 
 
 

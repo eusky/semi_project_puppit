@@ -1,37 +1,25 @@
-version: "3.8"
-
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: semi-app:latest
+  mysql:
+    image: mysql:8.0
     environment:
       TZ: Asia/Seoul
-      LANG: ko_KR.UTF-8
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-      AWS_REGION: ${AWS_REGION}
-      IAMPORT_API_KEY: ${IAMPORT_API_KEY}
-      IAMPORT_API_SECRET: ${IAMPORT_API_SECRET}
-    expose:
-      - "8080"
-    networks:
-      - appnet
-
-  nginx:
-    image: nginx:1.25-alpine
+      MYSQL_DATABASE: puppit
+      MYSQL_USER: puppit
+      MYSQL_PASSWORD: puppit_dev_password
+      MYSQL_ROOT_PASSWORD: puppit_dev_root_password
     ports:
-      - "80:80"
+      - "127.0.0.1:${MYSQL_PORT:-13306}:3306"
     volumes:
-      - ./ops/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-    depends_on:
-      - app
-    networks:
-      - appnet
+      - mysql_dev_data:/var/lib/mysql
+      - ./src/main/resources/SCHEMA.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./ops/mysql/02-seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+      - ./ops/mysql/03-demo-users.sql:/docker-entrypoint-initdb.d/03-demo-users.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=$$MYSQL_PASSWORD mysql -h 127.0.0.1 -u$$MYSQL_USER $$MYSQL_DATABASE -e 'SELECT COUNT(*) FROM product_status' >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
 
-networks:
-  appnet:
+volumes:
+  mysql_dev_data:

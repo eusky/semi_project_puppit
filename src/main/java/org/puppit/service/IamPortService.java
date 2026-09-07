@@ -51,7 +51,8 @@ public class IamPortService {
       headers.set("Authorization", accessToken);
 
       HttpEntity<Void> entity = new HttpEntity<>(headers);
-      String url = "https://api.iamport.kr/payments/" + impUid;
+      // 개발용 테스트 결제도 조회: 2026-01-26부터 기본 조회 대상에서 제외됨.
+      String url = "https://api.iamport.kr/payments/" + impUid + "?include_sandbox=true";
 
       ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
       Map body = response.getBody();

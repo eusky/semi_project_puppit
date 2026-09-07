@@ -38,7 +38,7 @@ public class UserController {
   private final UserService userService;
   private final S3Service s3Service;
   private final AmazonS3 amazonS3;
-  private static final String BUCKET = "puppit-goodee-semi";
+  private static final String BUCKET = "puppit-goodee-semi-857305036373-ap-northeast-2-an";
   
   
   @SuppressWarnings("unchecked")
@@ -356,7 +356,7 @@ public class UserController {
       userService.updateProfileImageKey(userId, newKey);
 
       rttr.addFlashAttribute("msg", "프로필 이미지가 변경되었습니다.");
-      amazonS3.setObjectAcl("puppit-goodee-semi", newKey, CannedAccessControlList.PublicRead);
+      amazonS3.setObjectAcl("puppit-goodee-semi-857305036373-ap-northeast-2-an", newKey, CannedAccessControlList.PublicRead);
     } catch (Exception e) {
       rttr.addFlashAttribute("msg", "업로드 실패" + e.getMessage());
     }
